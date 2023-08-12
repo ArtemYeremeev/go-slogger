@@ -45,8 +45,8 @@ func (ld *LogData) Print(msg string, args ...interface{}) {
 }
 
 // wrapLogParams инициализирует параметры логгера
-func wrapLogParams() slog.HandlerOptions {
-	return slog.HandlerOptions{
+func wrapLogParams() *slog.HandlerOptions {
+	return &slog.HandlerOptions{
 		AddSource: false,
 		Level:     &Lvler,
 		ReplaceAttr: func(gps []string, attr slog.Attr) slog.Attr {

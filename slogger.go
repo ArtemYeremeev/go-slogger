@@ -41,10 +41,10 @@ var Lvler slog.LevelVar
 
 // Make создает структурированный лог и заменяет лог по умолчанию
 func Make(logPath string, defaultLevel slog.Level) {
-	var (
-		w io.Writer
-		h slog.Handler
-	)
+	// Установка уровня логирования
+	Lvler.Set(defaultLevel)
+
+	var w io.Writer
 	if logPath != "" {
 		_, err := os.Stat(logPath)
 		if os.IsNotExist(err) {
@@ -63,13 +63,8 @@ func Make(logPath string, defaultLevel slog.Level) {
 			w = os.Stdout
 		}
 
-		h = wrapLogParams().NewJSONHandler(w)
+		slog.New(slog.NewJSONHandler(w, wrapLogParams()))
 	} else {
-		h = wrapLogParams().NewTextHandler(os.Stdout)
+		slog.New(slog.NewTextHandler(os.Stdout, wrapLogParams()))
 	}
-
-	// Установка уровня логирования
-	Lvler.Set(defaultLevel)
-
-	slog.SetDefault(slog.New(h))
 }
