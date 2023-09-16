@@ -2,7 +2,6 @@ package slogger
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -44,7 +43,10 @@ func Make(logPath string, defaultLevel slog.Level) {
 	// Установка уровня логирования
 	Lvler.Set(defaultLevel)
 
-	var w io.Writer
+	var (
+		w io.Writer
+		lg *slog.Logger
+	)
 	if logPath != "" {
 		_, err := os.Stat(logPath)
 		if os.IsNotExist(err) {
@@ -52,7 +54,7 @@ func Make(logPath string, defaultLevel slog.Level) {
 				os.Stderr.WriteString("не удалось создать директорию для сохранения файла лога")
 			}
 		
-			err = ioutil.WriteFile(logPath, nil, os.ModePerm)
+			err = os.WriteFile(logPath, nil, os.ModePerm)
 			if err != nil {
 				os.Stderr.WriteString("не удалось записать файл лога")
 			}
@@ -63,8 +65,10 @@ func Make(logPath string, defaultLevel slog.Level) {
 			w = os.Stdout
 		}
 
-		slog.New(slog.NewJSONHandler(w, wrapLogParams()))
+		lg = slog.New(slog.NewJSONHandler(w, wrapLogParams()))
 	} else {
-		slog.New(slog.NewTextHandler(os.Stdout, wrapLogParams()))
+		lg = slog.New(slog.NewTextHandler(os.Stdout, wrapLogParams()))
 	}
+
+	slog.SetDefault(lg)
 }
