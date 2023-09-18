@@ -39,7 +39,7 @@ var ColorLevels = map[slog.Leveler]func(format string, a ...interface{}) string 
 var Lvler slog.LevelVar
 
 // Make создает структурированный лог и заменяет лог по умолчанию
-func Make(logPath string, defaultLevel slog.Level) {
+func Make(logPath string, defaultLevel slog.Level, isSrcAttr bool) {
 	// Установка уровня логирования
 	Lvler.Set(defaultLevel)
 
@@ -65,9 +65,9 @@ func Make(logPath string, defaultLevel slog.Level) {
 			w = os.Stdout
 		}
 
-		lg = slog.New(slog.NewJSONHandler(w, wrapLogParams()))
+		lg = slog.New(slog.NewJSONHandler(w, wrapLogParams(isSrcAttr)))
 	} else {
-		lg = slog.New(slog.NewTextHandler(os.Stdout, wrapLogParams()))
+		lg = slog.New(slog.NewTextHandler(os.Stdout, wrapLogParams(isSrcAttr)))
 	}
 
 	slog.SetDefault(lg)

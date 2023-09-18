@@ -45,9 +45,9 @@ func (ld *LogData) Print(msg string, args ...interface{}) {
 }
 
 // wrapLogParams инициализирует параметры логгера
-func wrapLogParams() *slog.HandlerOptions {
+func wrapLogParams(isSrcAttr bool) *slog.HandlerOptions {
 	return &slog.HandlerOptions{
-		AddSource: false,
+		AddSource: isSrcAttr,
 		Level:     &Lvler,
 		ReplaceAttr: func(gps []string, attr slog.Attr) slog.Attr {
 			if attr.Key == slog.TimeKey { // Форматирование временной метки
